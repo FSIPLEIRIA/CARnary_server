@@ -4,17 +4,17 @@
 
 #include "CARnaryServer.h"
 
-CARnaryServer::CARnaryServer(int port) {
+using namespace carnary::server;
 
-    this->port = port;
+void CARnaryServer::addNegotiation(std::unique_ptr<carnary::server::Negotiation>& negotiation) {
+
+    try {
+        // begin the negotiation process
+        negotiation->begin();
+    } catch(std::runtime_error ex) {
+        std::cerr << "Trouble beginning the negotiation: " << ex.what() << std::endl;
+        // TODO: enter emergency state
+        return;
+    }
 }
 
-void CARnaryServer::start() {
-
-    // TODO: create the socket
-    // TODO: create a thread to accept negotiations
-    // TODO: relate service names to negotiations, sockets, addresses and ServiceMonitor instances
-    // TODO: in the negotiation phase, respond to each of the services with the consigned monitoring port
-    // TODO: listen to packets on the monitoring port of each of the services
-
-}

@@ -5,34 +5,26 @@
 #ifndef CARNARY_SERVER_CARNARYSERVER_H
 #define CARNARY_SERVER_CARNARYSERVER_H
 
-#include <thread>
-#include <mutex>
+#include <iostream>
+#include <vector>
+#include <memory>
+#include "Negotiation.h"
 
-#define CARNARY_NEGOTIATION_PORT 6666
-#define MAX_NEGOTIATION_QUEUE_LEN 20
+namespace carnary::server {
+    /*! \brief This class contains the functionality of the CARnary server. */
+    class CARnaryServer {
 
-/*! \brief This class contains the functionality of the CARnary server. */
-class CARnaryServer {
+        private:
+            /*! \brief Vector of tracked negotiations. */
+            std::vector<std::unique_ptr<carnary::server::Negotiation>> negotiations; 
 
-    private:
-        /*! \brief The socket of the negotiation service. */
-        int sockfd;
+        public:
+            CARnaryServer();
 
-        /*! \brief The port of the negotiation service. */
-        int port;
-
-        /*! \brief The current monitoring port to assign. */
-        int currentMonitoringPort = CARNARY_NEGOTIATION_PORT + 1;
-
-
-
-        void createNegotiationSocket();
-
-    public:
-        CARnaryServer(int port);
-
-        void start();
-};
+            /*! \brief Add a negotiation to begin. */
+            void addNegotiation(std::unique_ptr<carnary::server::Negotiation>& negotiation);
+    };
+}
 
 
 #endif //CARNARY_SERVER_CARNARYSERVER_H

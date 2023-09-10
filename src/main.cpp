@@ -17,6 +17,8 @@ int main() {
 
     // TODO: write error logs on a file
 
+    /*
+
     // relates IP addresses with negotiations
     std::unordered_map<std::string ,struct negotiation_t> negotiations;
     std::mutex negotiationTableMutex;
@@ -109,6 +111,8 @@ int main() {
     // TODO: start a thread to receive keepalive messages
 
     negotiationThread.join();
+
+    */
 
 
     return 0;
