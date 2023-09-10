@@ -6,6 +6,19 @@
 
 using namespace carnary::server;
 
+CARnaryServer::CARnaryServer() {
+}
+
+void CARnaryServer::emergencyRoutine() {
+
+    // TODO
+}
+
+void CARnaryServer::init() {
+    // TODO: create the negotiation socket
+    throw std::runtime_error("Not implemented.");
+}
+
 void CARnaryServer::addNegotiation(std::unique_ptr<carnary::server::Negotiation>& negotiation) {
 
     try {

@@ -21,4 +21,9 @@ enum negotiation_status_t {
     RUNTIME_FAILURE // the negotiation failed during its runtime
 };
 
+enum failure_code_t {
+    SUCCESS,
+    DAEMON_INIT_FAILURE
+};
+
 #endif //CARNARY_SERVER_PROTOCOL_H

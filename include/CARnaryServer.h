@@ -18,8 +18,14 @@ namespace carnary::server {
             /*! \brief Vector of tracked negotiations. */
             std::vector<std::unique_ptr<carnary::server::Negotiation>> negotiations; 
 
+            /*! \brief Routine to run on system failure (emergency). */
+            void emergencyRoutine();
+
         public:
             CARnaryServer();
+            
+            /*! \brief Initialize the daemon. Open the negotiation socket. */
+            void init();
 
             /*! \brief Add a negotiation to begin. */
             void addNegotiation(std::unique_ptr<carnary::server::Negotiation>& negotiation);
