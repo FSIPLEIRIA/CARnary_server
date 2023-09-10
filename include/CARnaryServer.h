@@ -27,6 +27,9 @@ namespace carnary::server {
             /*! \brief Initialize the daemon. Open the negotiation socket. */
             void init();
 
+            /*! \brief Destroy the server. Close the socket and perform cleanups. */
+            void destroy();
+
             /*! \brief Add a negotiation to begin. */
             void addNegotiation(std::unique_ptr<carnary::server::Negotiation>& negotiation);
     };

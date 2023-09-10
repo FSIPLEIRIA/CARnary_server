@@ -25,5 +25,8 @@ int main(int argc, char *argv[]) {
 
     std::cout << "Initialization done." << std::endl;
 
+    // TODO: create the signal handler (SIGTERM)
+    // TODO: create the watcher child process after negotiation
+
     return 0;
 }

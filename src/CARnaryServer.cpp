@@ -19,6 +19,11 @@ void CARnaryServer::init() {
     throw std::runtime_error("Not implemented.");
 }
 
+void CARnaryServer::destroy() {
+    // TODO: destroy the negotiation socket
+    throw std::runtime_error("Not implemented.");
+}
+
 void CARnaryServer::addNegotiation(std::unique_ptr<carnary::server::Negotiation>& negotiation) {
 
     try {
