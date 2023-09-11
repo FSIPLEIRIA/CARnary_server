@@ -9,7 +9,7 @@ namespace carnary::server {
 
     class Logger {
         // TODO: maybe use gson to write logs in JSON
-    }
+    };
 }
 
 #endif // CARNARY_SERVER_LOGGER_H

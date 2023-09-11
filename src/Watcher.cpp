@@ -4,4 +4,7 @@
 
 #include "Watcher.h"
 
-using namespace carnary::server:
+using namespace carnary::server;
+
+Watcher::Watcher(std::unique_ptr<carnary::server::Negotiation>& negotiation) : negotiation(negotiation) {
+}

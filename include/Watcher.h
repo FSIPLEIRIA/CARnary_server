@@ -15,7 +15,7 @@ namespace carnary::server {
         
         private:
             /*! \brief The negotiation this watcher refers to. */
-            carnary::server::Negotiation negotiation;
+            std::unique_ptr<carnary::server::Negotiation>& negotiation;
 
         public:
             Watcher(std::unique_ptr<carnary::server::Negotiation>& negotiation);
