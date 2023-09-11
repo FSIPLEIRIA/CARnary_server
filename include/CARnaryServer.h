@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <cstring>
 #include <cerrno>
+#include <csignal>
 #include "Negotiation.h"
 
 namespace carnary::server {
@@ -22,11 +23,27 @@ namespace carnary::server {
             /*! \brief Vector of tracked negotiations. */
             std::vector<std::unique_ptr<carnary::server::Negotiation>> negotiations; 
 
-            /*! \brief Routine to run on system failure (emergency). */
-            void emergencyRoutine();
+
+            /*! \brief Creates the negotiation socket. */
+            void createNegotiationSocket();
+
+            /*! \brief Sets up the SIGTERM signal handler. */
+            void setupSignalHandlers();
+
+        protected:
+            CARnaryServer();
+    
+            /*! \brief Singleton instance. */
+            static carnary::server::CARnaryServer* instance;
+
 
         public:
-            CARnaryServer();
+
+            /*! \brief Get singleton instance. */
+            static carnary::server::CARnaryServer* getInstance();
+
+            /*! \brief Routine to run on system failure (emergency). */
+            void emergencyRoutine();
             
             /*! \brief Initialize the daemon. Open the negotiation socket. */
             void init();
@@ -36,6 +53,10 @@ namespace carnary::server {
 
             /*! \brief Add a negotiation to begin. */
             void addNegotiation(std::unique_ptr<carnary::server::Negotiation> negotiation);
+
+            /*! \brief SIGTERM signal handler. Enters emergency mode. */
+            friend void signalHandler(int signum);
+
     };
 }
 

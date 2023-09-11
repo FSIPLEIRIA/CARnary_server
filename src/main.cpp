@@ -31,11 +31,11 @@ int main(int argc, char *argv[]) {
 
     std::cout << "** CARnary Daemon **" << std::endl;
 
-    CARnaryServer server = CARnaryServer();
+    CARnaryServer* server = CARnaryServer::getInstance();
 
     try {
         std::cout << "Initializing the daemon... ";
-        server.init();
+        server->init();
     } catch(std::runtime_error ex) {
         std::cout << "Error initializing the daemon: " << ex.what() << std::endl;
         return DAEMON_INIT_FAILURE;

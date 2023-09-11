@@ -6,17 +6,64 @@
 
 using namespace carnary::server;
 
+CARnaryServer* CARnaryServer::instance = nullptr;
+
 CARnaryServer::CARnaryServer() {
 }
 
 void CARnaryServer::emergencyRoutine() {
 
-    // TODO: kill every system
-    // TODO: actuate the EBS
+    std::cout << "** EMERGENCY MODE ENTERED **" << std::endl;
+
+    // TODO: kill every system (send a SIGKILL)
+    std::cout << "Killing every system... ";
+    std::cout << "Done." << std::endl;
+
+    // TODO: actuate the EBS (to be defined)
+    std::cout << "Actuating the EBS... ";
+    std::cout << "Done." << std::endl;
+}
+
+void CARnaryServer::createNegotiationSocket() {
+    // TODO
+}
+
+void signalHandler(int signum) {
+
+    CARnaryServer* instance = CARnaryServer::getInstance();
+
+    if(signum == SIGTERM)
+        instance->emergencyRoutine();
+}
+
+void CARnaryServer::setupSignalHandlers() {
+
+    // initialize the SIGTERM signal handler
+    sighandler_t sig = signal(SIGTERM, signalHandler);
+
+    // check signal handler setup failure
+    if(sig == SIG_ERR)
+        throw std::runtime_error("Error setting up the signal handler.");
+
+    return;
+}
+
+CARnaryServer* CARnaryServer::getInstance() {
+    if(instance == nullptr)
+        instance = new CARnaryServer();
+
+    return instance;
 }
 
 void CARnaryServer::init() {
     // TODO: create the negotiation socket
+
+    try {
+        this->setupSignalHandlers();
+    } catch(std::runtime_error& ex) {
+        throw ex;
+    }
+    
     throw std::runtime_error("Not implemented.");
 }
 
