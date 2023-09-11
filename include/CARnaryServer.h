@@ -8,6 +8,10 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <sys/types.h>
+#include <unistd.h>
+#include <cstring>
+#include <cerrno>
 #include "Negotiation.h"
 
 namespace carnary::server {
@@ -31,7 +35,7 @@ namespace carnary::server {
             void destroy();
 
             /*! \brief Add a negotiation to begin. */
-            void addNegotiation(std::unique_ptr<carnary::server::Negotiation>& negotiation);
+            void addNegotiation(std::unique_ptr<carnary::server::Negotiation> negotiation);
     };
 }
 

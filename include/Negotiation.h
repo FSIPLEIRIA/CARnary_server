@@ -17,7 +17,10 @@ namespace carnary::server {
         
         private:
             /*! \brief PID of the system negotiating. */
-            pid_t systemPID;
+            pid_t systemPID = -1;
+
+            /*! \brief PID of the watcher. */
+            pid_t watcherPID = -1;
 
             /*! \brief TCP port of the monitoring socket. */
             std::uint8_t monitoringPort;
@@ -43,6 +46,9 @@ namespace carnary::server {
             /*! \brief System PID. */
             pid_t getSystemPID();
 
+            /*! \brief Watcher PID: */
+            pid_t getWatcherPID();
+
             /*! \brief Monitoring TCP port. */
             std::uint8_t getMonitoringPort();
 
@@ -54,6 +60,8 @@ namespace carnary::server {
 
             /*! \brief Negotiation status. */
             negotiation_status_t getStatus();
+
+            void setWatcherPID(pid_t pid);
 
             /*! \brief Set the monitoring port. Can only be done before beginning the negotiation protocol. */
             void setMonitoringPort(std::uint8_t monitoringPort);

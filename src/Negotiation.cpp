@@ -47,6 +47,10 @@ negotiation_status_t Negotiation::getStatus() {
     return this->status;
 }
 
+void Negotiation::setWatcherPID(pid_t pid) {
+    this->watcherPID = pid;
+}
+
 void Negotiation::setMonitoringPort(std::uint8_t monitoringPort) {
     if(this->status != CREATED)
         throw std::runtime_error("Monitoring port can only be set before beginning negotiation!");

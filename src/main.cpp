@@ -1,4 +1,8 @@
 #include <iostream>
+#include <sys/types.h>
+#include <unistd.h>
+#include <cstring>
+#include <cerrno>
 #include "CARnaryServer.h"
 #include "protocol.h"
 
@@ -10,6 +14,20 @@ int main(int argc, char *argv[]) {
     
     (int)argc;
     (char*)argv;
+
+    // the daemon should be a child process of some process like systemd
+
+    pid_t pid = fork();
+    if(pid > 0) {
+        // parent process, nothing to do
+        return 0;
+    } else if(pid < 0) {
+        // failure creating the child process
+        std::cerr << "Error creating the daemon process: " << strerror(errno) << std::endl;
+        return DAEMON_PROCESS_INIT_FAILURE;
+    }
+
+    // this is the child process (daemon process). continue execution normally
 
     std::cout << "** CARnary Daemon **" << std::endl;
 
