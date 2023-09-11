@@ -6,8 +6,9 @@
 
 using namespace carnary::server;
 
-Negotiation::Negotiation(pid_t systemPID, uint16_t minHeartbeatRate) {
+Negotiation::Negotiation(std::string serviceName, pid_t systemPID, uint16_t minHeartbeatRate) {
 
+    this->serviceName = serviceName;
     this->systemPID = systemPID;
     this->minHeartbeatRate = minHeartbeatRate;
 
@@ -45,6 +46,10 @@ std::string Negotiation::getServiceName() {
 
 negotiation_status_t Negotiation::getStatus() {
     return this->status;
+}
+
+int* Negotiation::getPipe() const {
+    return (int*) this->pipe;
 }
 
 void Negotiation::setWatcherPID(pid_t pid) {

@@ -15,6 +15,8 @@
 #include <csignal>
 #include "Negotiation.h"
 
+#define NEGOTIATION_PORT 6666
+
 namespace carnary::server {
     /*! \brief This class contains the functionality of the CARnary server. */
     class CARnaryServer {
@@ -25,7 +27,7 @@ namespace carnary::server {
 
 
             /*! \brief Creates the negotiation socket. */
-            void createNegotiationSocket();
+            void setupNegotiationSocket();
 
             /*! \brief Sets up the SIGTERM signal handler. */
             void setupSignalHandlers();

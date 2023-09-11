@@ -43,8 +43,10 @@ int main(int argc, char *argv[]) {
 
     std::cout << "Initialization done." << std::endl;
 
-    // TODO: create the signal handler (SIGTERM)
-    // TODO: create the watcher child process after negotiation
+    while(1) {
+        // sleep some time, to do less cycles, having less CPU impact
+        sleep(5);
+    }
 
     return 0;
 }

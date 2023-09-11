@@ -37,8 +37,11 @@ namespace carnary::server {
             /*! \brief Negotiation status. */
             negotiation_status_t status = CREATED;
 
+            /*! \brief Pipe between daemon and watcher. */
+            int pipe[2];
+
         public:
-            Negotiation(pid_t systemPID, uint16_t minHeartbeatRate);
+            Negotiation(std::string serviceName, pid_t systemPID, uint16_t minHeartbeatRate);
 
             /*! \brief Begin the negotiation. */
             void begin(); // TODO
@@ -60,6 +63,9 @@ namespace carnary::server {
 
             /*! \brief Negotiation status. */
             negotiation_status_t getStatus();
+
+            /*! \brief Get the pipe pointer between the daemon and the watcher. */
+            int* getPipe() const;
 
             void setWatcherPID(pid_t pid);
 

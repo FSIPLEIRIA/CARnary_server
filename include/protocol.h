@@ -24,7 +24,8 @@ enum negotiation_status_t {
 enum failure_code_t {
     SUCCESS,
     DAEMON_PROCESS_INIT_FAILURE,
-    DAEMON_INIT_FAILURE
+    DAEMON_INIT_FAILURE,
+    EMERGENCY
 };
 
 #endif //CARNARY_SERVER_PROTOCOL_H
