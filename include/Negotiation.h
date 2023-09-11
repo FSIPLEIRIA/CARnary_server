@@ -47,22 +47,22 @@ namespace carnary::server {
             void begin(); // TODO
             
             /*! \brief System PID. */
-            pid_t getSystemPID();
+            pid_t getSystemPID() const;
 
             /*! \brief Watcher PID: */
-            pid_t getWatcherPID();
+            pid_t getWatcherPID() const;
 
             /*! \brief Monitoring TCP port. */
-            std::uint8_t getMonitoringPort();
+            std::uint8_t getMonitoringPort() const;
 
             /*! \brief Minimum acceptable heartbeat rate. */
-            std::uint16_t getMinHeartbeatRate();
+            std::uint16_t getMinHeartbeatRate() const;
 
             /*! \brief Service name description. (E.g. "planning", "rs_bridge", etc.) */
-            std::string getServiceName();
+            std::string getServiceName() const;
 
             /*! \brief Negotiation status. */
-            negotiation_status_t getStatus();
+            negotiation_status_t getStatus() const;
 
             /*! \brief Get the pipe pointer between the daemon and the watcher. */
             int* getPipe() const;

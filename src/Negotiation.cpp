@@ -25,26 +25,26 @@ void Negotiation::begin() {
     // TODO: start the negotiation protocol
 }
 
-pid_t Negotiation::getSystemPID() {
+pid_t Negotiation::getSystemPID() const {
     return this->systemPID;
 }
 
-std::uint8_t Negotiation::getMonitoringPort() {
+std::uint8_t Negotiation::getMonitoringPort() const {
     if(!(this->monitoringPortSet))
         throw std::runtime_error("The monitoring port was not set!");
 
     return this->monitoringPort;
 }
 
-std::uint16_t Negotiation::getMinHeartbeatRate() {
+std::uint16_t Negotiation::getMinHeartbeatRate() const {
     return this->minHeartbeatRate;
 }
 
-std::string Negotiation::getServiceName() {
+std::string Negotiation::getServiceName() const {
     return this->serviceName;
 }
 
-negotiation_status_t Negotiation::getStatus() {
+negotiation_status_t Negotiation::getStatus() const {
     return this->status;
 }
 
