@@ -6,5 +6,5 @@
 
 using namespace carnary::server;
 
-Watcher::Watcher(std::unique_ptr<carnary::server::Negotiation>& negotiation) : negotiation(negotiation) {
+Watcher::Watcher(struct negotiation_t* negotiation) : negotiation(negotiation) {
 }

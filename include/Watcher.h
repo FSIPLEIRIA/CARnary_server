@@ -5,8 +5,7 @@
 #ifndef CARNARY_SERVER_WATCHER_H
 #define CARNARY_SERVER_WATCHER_H
 
-#include <memory>
-#include "Negotiation.h"
+#include "protocol.h"
 
 namespace carnary::server {
 
@@ -15,10 +14,13 @@ namespace carnary::server {
         
         private:
             /*! \brief The negotiation this watcher refers to. */
-            std::unique_ptr<carnary::server::Negotiation>& negotiation;
+            struct negotiation_t* negotiation;
 
         public:
-            Watcher(std::unique_ptr<carnary::server::Negotiation>& negotiation);
+            Watcher(struct negotiation_t* negotiation);
+
+            /*! \brief Initialize the monitoring socket. */
+            void init();
         
     };
 }
