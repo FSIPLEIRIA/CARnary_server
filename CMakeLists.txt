@@ -5,5 +5,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 include_directories(include)
 
-add_executable(CARnary_server src/main.cpp src/CARnaryServer.cpp src/Logger.cpp src/Watcher.cpp)
+add_executable(CARnary_server src/main.cpp src/CARnaryServer.cpp src/Logger.cpp src/Watcher.cpp
+        src/Utils.cpp)
 target_link_libraries(CARnary_server PRIVATE pthread)

@@ -19,6 +19,7 @@
 #include <thread>
 #include <mutex>
 #include "protocol.h"
+#include "Utils.h"
 
 // the TCP port to reserve to the negotiation
 #define DAEMON_TCP_NEGOTIATION_PORT 6666

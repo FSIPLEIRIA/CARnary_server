@@ -163,36 +163,10 @@ void CARnaryServer::setupNegotiationSocket() {
 
     std::cout << "Setting up the negotiation socket... ";
 
-    // create the socket file descriptor:
-    // AF_INET means IPv4
-    // SOCK_STREAM means TCP. To use UDP, would use SOCK_DGRAM instead
-    // 0 is the protocol value for IP
-    this->sockfd = socket(AF_INET, SOCK_STREAM, 0);
-
-    // check the socket creation for errors
-    if (this->sockfd == -1) {
-        std::cerr << strerror(errno) << std::endl;
-        throw std::runtime_error("Error creating the negotiation file descriptor");
-    }
-
-    // pre-fill the address with zeros
-    memset(&serverAddr, 0, sizeof(struct sockaddr_in));
-
-    // fill the address structure
-    serverAddr.sin_family = AF_INET;
-    serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    serverAddr.sin_port = htons(DAEMON_TCP_NEGOTIATION_PORT);
-
-    // bind the socket to the address
-    if (bind(this->sockfd, (struct sockaddr *) &serverAddr, sizeof(struct sockaddr_in)) < 0) {
-        std::cerr << strerror(errno) << std::endl;
-        throw std::runtime_error("Error binding the address to the socket");
-    }
-
-    // listen to uncoming clients
-    if (listen(this->sockfd, NEGOTIATION_QUEUE_LEN) < 0) {
-        std::cerr << strerror(errno) << std::endl;
-        throw std::runtime_error("Error listening for clients");
+    try {
+        this->sockfd = carnary::server::Utils::createSocket(DAEMON_TCP_NEGOTIATION_PORT, TCP_SOCKET);
+    } catch(std::runtime_error& ex) {
+        throw ex;
     }
 
     // have a separate thread accepting clients - the negotiation thread
