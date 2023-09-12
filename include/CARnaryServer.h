@@ -9,13 +9,15 @@
 #include <vector>
 #include <memory>
 #include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
 #include <unistd.h>
 #include <cstring>
 #include <cerrno>
 #include <csignal>
 #include "Negotiation.h"
 
-#define NEGOTIATION_PORT 6666
+#define DAEMON_TCP_NEGOTIATION_PORT 6666
 
 namespace carnary::server {
     /*! \brief This class contains the functionality of the CARnary server. */
@@ -23,14 +25,22 @@ namespace carnary::server {
 
         private:
             /*! \brief Vector of tracked negotiations. */
-            std::vector<std::unique_ptr<carnary::server::Negotiation>> negotiations; 
+            std::vector<std::unique_ptr<carnary::server::Negotiation>> negotiations;
 
+            /*! \brief Negotiation socket file descriptor. */
+            int sockfd = -1;
+
+            /*! \brief Server address structure. */
+            struct sockaddr_in serverAddr;
 
             /*! \brief Creates the negotiation socket. */
             void setupNegotiationSocket();
 
             /*! \brief Sets up the SIGTERM signal handler. */
             void setupSignalHandlers();
+
+            /*! \brief Destroy the server. Close the socket and perform cleanups. */
+            void destroy();
 
         protected:
             CARnaryServer();
@@ -49,9 +59,6 @@ namespace carnary::server {
             
             /*! \brief Initialize the daemon. Open the negotiation socket. */
             void init();
-
-            /*! \brief Destroy the server. Close the socket and perform cleanups. */
-            void destroy();
 
             /*! \brief Add a negotiation to begin. */
             void addNegotiation(std::unique_ptr<carnary::server::Negotiation> negotiation);

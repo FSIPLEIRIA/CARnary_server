@@ -32,12 +32,48 @@ void CARnaryServer::emergencyRoutine() {
     std::cout << "Actuating the EBS... ";
     std::cout << "Done." << std::endl;
 
+    // destroy everything
+    try {
+        this->destroy();
+    } catch(std::runtime_error& ex) {
+        std::cerr << "Error destroying the daemon: " << strerror(errno) << std::endl;
+    }
+
     // terminate the process
     exit(EMERGENCY);
 }
 
 void CARnaryServer::setupNegotiationSocket() {
     // TODO
+
+    // create the socket file descriptor:
+    // AF_INET means IPv4
+    // SOCK_STREAM means TCP. To use UDP, would use SOCK_DGRAM instead
+    // 0 is the protocol value for IP
+    this->sockfd = socket(AF_INET, SOCK_STREAM, 0);
+
+    // check the socket creation for errors
+    if(this->sockfd == -1) {
+        std::cerr << strerror(errno) << std::endl;
+        throw std::runtime_error("Error creating the negotiation file descriptor");
+    }
+    
+    // pre-fill the address with zeros
+    memset(&serverAddr, 0, sizeof(struct sockaddr_in));
+
+    // fill the address structure
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    serverAddr.sin_port = htons(DAEMON_TCP_NEGOTIATION_PORT);
+
+    // bind the socket to the address
+    if(bind(this->sockfd, (struct sockaddr*) &serverAddr, sizeof(struct sockaddr_in)) == -1) {
+        std::cerr << strerror(errno) << std::endl;
+        throw std::runtime_error("Error binding the address to the socket");
+    }
+
+    // TODO: accept clients and process negotiations
+
 }
 
 void signalHandler(int signum) {
@@ -76,7 +112,7 @@ void CARnaryServer::init() {
         throw ex;
     }
     
-    // TODO: create the negotiation socket
+    // create the negotiation socket
     try {
         this->setupNegotiationSocket();
     } catch(std::runtime_error& ex) {
@@ -85,8 +121,13 @@ void CARnaryServer::init() {
 }
 
 void CARnaryServer::destroy() {
-    // TODO: destroy the negotiation socket
-    throw std::runtime_error("Not implemented.");
+
+    // close the negotiation socket
+    if(close(this->sockfd) < 0) {
+        std::cerr << strerror(errno) << std::endl;
+        throw std::runtime_error("Error closing the negotiation socket");
+    }
+
 }
 
 void CARnaryServer::addNegotiation(std::unique_ptr<carnary::server::Negotiation> negotiation) {
