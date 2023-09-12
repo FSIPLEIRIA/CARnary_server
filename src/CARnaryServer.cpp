@@ -29,8 +29,15 @@ void negotiationRoutine(int clientfd) {
         throw std::runtime_error("Error receiving client negotiation!");
     }
 
+    // set negotiating status
+    negot->status = NEGOTIATING;
+
+    // set daemon PID
+    negot->daemonPID = getpid();
+
     // check the values
     if(negot->systemPID < 0) {
+        negot->status = FAILED_NEGOTIATION;
         std::uint8_t response = ERR_PID_NOT_PROVIDED;
         // the system has not provided its PIDs
         // respond with the error
@@ -40,10 +47,13 @@ void negotiationRoutine(int clientfd) {
 
     // create the pipe
     if(pipe(negot->daemonWatcherPipe) < 0) {
+        negot->status = FAILED_NEGOTIATION;
         throw std::runtime_error("Error creating the daemon-watcher pipe.");
     }
 
+    // initialize the semaphore
     if(sem_init(&(negot->daemonWatcherSemaphore), 0, 0) < 0) {
+        negot->status = FAILED_NEGOTIATION;
         throw std::runtime_error("Error initializing the daemon-watcher semaphore.");
     }
 
@@ -52,7 +62,7 @@ void negotiationRoutine(int clientfd) {
     pid_t pid = fork();
     // check fork error
     if(pid < 0) {
-
+        negot->status = FAILED_NEGOTIATION;
         // respond with the error
         std::uint8_t response = ERR_CREATING_WATCHER;
         if(send(clientfd, &response, sizeof(std::uint8_t), MSG_TRUNC | MSG_WAITALL) < 0) {
@@ -64,26 +74,39 @@ void negotiationRoutine(int clientfd) {
 
         // -- WATCHER PROCESS --
 
+        // TODO: offload the watcher execution to its class
+
         // execution only continues after the daemon consigns a port
         if(sem_wait(&(negot->daemonWatcherSemaphore)) < 0) {
+            negot->status = FAILED_NEGOTIATION;
             throw std::runtime_error("Error waiting for the semaphore!");
         }
 
         // read the updated negotiation, containing the port
         if(read(negot->daemonWatcherPipe[0], negot, sizeof(struct negotiation_t)) < 0) {
+            negot->status = FAILED_NEGOTIATION;
             std::uint8_t response = WATCHER_NACK;
             // reply with a NACK
             if(write(negot->daemonWatcherPipe[1], &response, sizeof(std::uint8_t)) < 0) {
+                negot->status = FAILED_NEGOTIATION;
                 throw std::runtime_error("Error replying to the daemon!");
             }
             throw std::runtime_error("Error receiving data from the daemon through the pipe!");
         }
 
-        // TODO: open the watching port (TCP socket)
+        // open the monitoring port (TCP socket)
+        int watcherSocket = -1;
+        try {
+            watcherSocket = Utils::createSocket(negot->monitoringPort, TCP_SOCKET);
+        } catch(std::runtime_error& ex) {
+            negot->status = FAILED_NEGOTIATION;
+            throw ex;
+        }
 
         // reply with an ACK
         std::uint8_t response = WATCHER_ACK;
         if(write(negot->daemonWatcherPipe[1], &response, sizeof(std::uint8_t)) < 0) {
+            negot->status = FAILED_NEGOTIATION;
             throw std::runtime_error("Error replying to the daemon!");
         }
 
@@ -97,24 +120,31 @@ void negotiationRoutine(int clientfd) {
         negot->monitoringPort = DAEMON_TCP_NEGOTIATION_PORT + daemon->getNegotiations().size() + 1;
 
         // give the negotiation and the monitoring port to the watcher through the pipe
-        if(write(negot->daemonWatcherPipe[1], negot, sizeof(struct negotiation_t)) < 0)
+        if(write(negot->daemonWatcherPipe[1], negot, sizeof(struct negotiation_t)) < 0) {
+            negot->status = FAILED_NEGOTIATION;
             throw std::runtime_error("Error communicating with the watcher through the pipe!");
+        }
 
         // signal the watcher to continue (read the updated negotiation)
         if(sem_post(&(negot->daemonWatcherSemaphore)) < 0) {
+            negot->status = FAILED_NEGOTIATION;
             throw std::runtime_error("Error signaling the semaphore!");
         }
 
         std::uint8_t watcherResponse;
 
         // the watcher responds with ACK/NACK
-        if(read(negot->daemonWatcherPipe[0], &watcherResponse, sizeof(std::uint8_t)) < 0)
+        if(read(negot->daemonWatcherPipe[0], &watcherResponse, sizeof(std::uint8_t)) < 0) {
+            negot->status = FAILED_NEGOTIATION;
             throw std::runtime_error("Error reading watcher response from the pipe!");
-        if(watcherResponse != WATCHER_ACK)
+        }
+        if(watcherResponse != WATCHER_ACK) {
+            negot->status = FAILED_NEGOTIATION;
             throw std::runtime_error("The watcher had a problem!");
+        }
 
         // this negotiation is now concluded
-
+        negot->status = NEGOTIATION_OK;
     }
 
 }

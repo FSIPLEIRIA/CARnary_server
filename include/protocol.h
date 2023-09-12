@@ -22,7 +22,6 @@ enum heartbeat_t {
 enum negotiation_res_t {
     ERR_PID_NOT_PROVIDED,
     ERR_CREATING_WATCHER,
-    NEGOTIATION_SUCCESS,
     WATCHER_ACK,
     WATCHER_NACK
 };
@@ -48,6 +47,7 @@ enum failure_code_t {
 struct negotiation_t {
     pid_t systemPID = -1;
     pid_t watcherPID = -1;
+    pid_t daemonPID = -1;
 
     std::uint8_t monitoringPort;
     std::uint16_t minHeartbeatRate;
