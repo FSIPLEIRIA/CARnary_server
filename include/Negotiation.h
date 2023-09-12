@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <string>
 #include <stdexcept>
+#include <netinet/in.h>
 #include "protocol.h"
 
 namespace carnary::server {
@@ -36,6 +37,9 @@ namespace carnary::server {
 
             /*! \brief Negotiation status. */
             negotiation_status_t status = CREATED;
+
+            /*! \brief Client address from the socket. */
+            struct sockaddr_in clientAddress;
 
             /*! \brief Pipe between daemon and watcher. */
             int pipe[2];
@@ -66,6 +70,9 @@ namespace carnary::server {
 
             /*! \brief Get the pipe pointer between the daemon and the watcher. */
             int* getPipe() const;
+
+            /*! \brief Get the clients address pointer. */
+            struct sockaddr_in* getClientAddress() const;
 
             void setWatcherPID(pid_t pid);
 

@@ -52,6 +52,10 @@ int* Negotiation::getPipe() const {
     return (int*) this->pipe;
 }
 
+struct sockaddr_in* Negotiation::getClientAddress() const {
+    return (struct sockaddr_in*) &(this->clientAddress);
+}
+
 void Negotiation::setWatcherPID(pid_t pid) {
     this->watcherPID = pid;
 }

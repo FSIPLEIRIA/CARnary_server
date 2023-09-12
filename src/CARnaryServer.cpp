@@ -44,7 +44,6 @@ void CARnaryServer::emergencyRoutine() {
 }
 
 void CARnaryServer::setupNegotiationSocket() {
-    // TODO
 
     // create the socket file descriptor:
     // AF_INET means IPv4
@@ -67,13 +66,16 @@ void CARnaryServer::setupNegotiationSocket() {
     serverAddr.sin_port = htons(DAEMON_TCP_NEGOTIATION_PORT);
 
     // bind the socket to the address
-    if(bind(this->sockfd, (struct sockaddr*) &serverAddr, sizeof(struct sockaddr_in)) == -1) {
+    if(bind(this->sockfd, (struct sockaddr*) &serverAddr, sizeof(struct sockaddr_in)) < 0) {
         std::cerr << strerror(errno) << std::endl;
         throw std::runtime_error("Error binding the address to the socket");
     }
 
-    // TODO: accept clients and process negotiations
-
+    // listen to uncoming clients
+    if(listen(this->sockfd, NEGOTIATION_QUEUE_LEN) < 0) {
+        std::cerr << strerror(errno) << std::endl;
+        throw std::runtime_error("Error listening for clients");
+    }
 }
 
 void signalHandler(int signum) {
@@ -156,7 +158,10 @@ void CARnaryServer::addNegotiation(std::unique_ptr<carnary::server::Negotiation>
         negotiation->setWatcherPID(watcher_pid);
 
         // add the negotiation
-        this->negotiations.push_back(std::move(negotiation));
+        {
+            std::lock_guard negotiationsLock(this->negotiationsMutex);
+            this->negotiations.push_back(std::move(negotiation));
+        }
 
     } else if(watcher_pid == 0) {
         // watcher code

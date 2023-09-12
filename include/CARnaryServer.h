@@ -15,9 +15,14 @@
 #include <cstring>
 #include <cerrno>
 #include <csignal>
+#include <thread>
+#include <mutex>
 #include "Negotiation.h"
 
+// the TCP port to reserve to the negotiation
 #define DAEMON_TCP_NEGOTIATION_PORT 6666
+// length of the queue of waiting clients 
+#define NEGOTIATION_QUEUE_LEN 10
 
 namespace carnary::server {
     /*! \brief This class contains the functionality of the CARnary server. */
@@ -26,6 +31,9 @@ namespace carnary::server {
         private:
             /*! \brief Vector of tracked negotiations. */
             std::vector<std::unique_ptr<carnary::server::Negotiation>> negotiations;
+
+            /*! \brief Mutex which controls access to the negotiations vector. */
+            std::mutex negotiationsMutex;
 
             /*! \brief Negotiation socket file descriptor. */
             int sockfd = -1;
