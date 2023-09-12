@@ -21,6 +21,16 @@ Watcher::Watcher(struct negotiation_t* negotiation) : negotiation(negotiation) {
     this->instance = carnary::server::CARnaryServer::getInstance();
 }
 
+void Watcher::enterDaemonEmergency() {
+    // try to execute directly the emergency routine
+    instance->emergencyRoutine();
+
+    // send a signal to the daemon
+    if(kill(negotiation->daemonPID, SIGTERM) < 0) {
+        throw std::runtime_error("Error signaling the daemon to enter emergency mode!");
+    }
+}
+
 void Watcher::init() {
 
     // wait for the daemon semaphore
@@ -58,7 +68,22 @@ void Watcher::init() {
     }
 
     auto rateCheckingRoutine = [&] () {
-        // TODO
+        // get the current time point
+        std::chrono::time_point<std::chrono::high_resolution_clock> now = std::chrono::high_resolution_clock::now();
+
+        // calculate the period
+        auto period = std::chrono::duration_cast<std::chrono::milliseconds>(now - this->lastHeartbeat);
+
+        // calculate the rate
+        float rate = (float) 1 / ((float) period.count() / 1000);
+
+        if((std::uint16_t) rate < this->negotiation->minHeartbeatRate) {
+            // enter emergency
+            this->enterDaemonEmergency();
+        }
+
+        // sleep some milliseconds to reduce resource consumption
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
     };
 
     // wait the client on a new thread, to unblock this one
@@ -69,6 +94,10 @@ void Watcher::init() {
             throw std::runtime_error("Error accepting the client!");
         }
         std::cout << "Client accepted " << negotiation->serviceName << std::endl;
+
+        // start the thread which monitors heartbeat rate
+        std::thread heartbeatRateMonitoringThread(rateCheckingRoutine);
+        heartbeatRateMonitoringThread.detach();
 
         std::uint8_t heartbeat;
 
@@ -85,17 +114,10 @@ void Watcher::init() {
             // register heartbeat time point
             this->lastHeartbeat = std::chrono::high_resolution_clock::now();
 
-            // TODO: create a thread checking the elapsed time
         } while(heartbeat != PANIC);
 
         // if execution gets to this point, this is panic
-        // try to execute directly the emergency routine
-        instance->emergencyRoutine();
-
-        // send a signal to the daemon
-        if(kill(negotiation->daemonPID, SIGTERM) < 0) {
-            throw std::runtime_error("Error signaling the daemon to enter emergency mode!");
-        }
+        this->enterDaemonEmergency();
     };
 
     // start the thread and detach it

@@ -145,6 +145,11 @@ void negotiationRoutine(int clientfd) {
 
         // this negotiation is now concluded
         negot->status = NEGOTIATION_OK;
+
+        // close the client socket
+        if(close(clientfd) < 0) {
+            throw std::runtime_error("Error closing the negotiation file descriptor.");
+        }
     }
 
 }

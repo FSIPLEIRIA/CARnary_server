@@ -30,15 +30,14 @@ namespace carnary::server {
             /*! \brief The time point in which the last heartbeat was received */
             std::chrono::time_point<std::chrono::high_resolution_clock> lastHeartbeat;
 
+            void enterDaemonEmergency();
+
         public:
             Watcher(struct negotiation_t* negotiation);
 
-            /*! \brief Initialize the monitoring socket. */
+            /*! \brief Initialize the monitoring socket and wait for the client. */
             void init();
 
-            /*! \brief Routine called each time a heartbeat is received. */
-            friend void heartbeatRoutine();
-        
     };
 }
 
