@@ -36,15 +36,15 @@ int main(int argc, char *argv[]) {
     try {
         std::cout << "Initializing the daemon... ";
         server->init();
-    } catch(std::runtime_error ex) {
+    } catch(std::runtime_error& ex) {
         std::cout << "Error initializing the daemon: " << ex.what() << std::endl;
         return DAEMON_INIT_FAILURE;
     }
 
     std::cout << "Initialization done." << std::endl;
 
-    while(1) {
-        // sleep some time, to do less cycles, having less CPU impact
+    while(true) {
+        // sleep some time, to do fewer cycles, having less CPU impact
         sleep(5);
     }
 
