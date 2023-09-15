@@ -4,7 +4,7 @@
 #include <cstring>
 #include <cerrno>
 #include "CARnaryServer.h"
-#include "protocol.h"
+#include <carnary/protocol.h>
 
 #define CARNARY_NEGOTIATION_PORT 6666
 

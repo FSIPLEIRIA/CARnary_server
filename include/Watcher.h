@@ -8,7 +8,7 @@
 #include <chrono>
 #include <csignal>
 #include "CARnaryServer.h"
-#include "protocol.h"
+#include <carnary/protocol.h>
 
 namespace carnary::server {
 

@@ -18,7 +18,7 @@
 #include <cstdlib>
 #include <thread>
 #include <mutex>
-#include "protocol.h"
+#include <carnary/protocol.h>
 #include <carnary/Utils.h>
 
 // length of the queue of waiting clients 
