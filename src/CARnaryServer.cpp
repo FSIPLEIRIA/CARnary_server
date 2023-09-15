@@ -97,7 +97,7 @@ void negotiationRoutine(int clientfd) {
         // open the monitoring port (TCP socket)
         int watcherSocket = -1;
         try {
-            watcherSocket = Utils::createSocket(negot->monitoringPort, TCP_SOCKET);
+            watcherSocket = carnary::lib::Utils::createClientSocket("0.0.0.0", negot->monitoringPort, carnary::lib::TCP_SOCKET);
         } catch(std::runtime_error& ex) {
             negot->status = FAILED_NEGOTIATION;
             throw ex;
@@ -199,7 +199,7 @@ void CARnaryServer::setupNegotiationSocket() {
     std::cout << "Setting up the negotiation socket... ";
 
     try {
-        this->sockfd = carnary::server::Utils::createSocket(DAEMON_TCP_NEGOTIATION_PORT, TCP_SOCKET);
+        this->sockfd = carnary::lib::Utils::createClientSocket("0.0.0.0", DAEMON_TCP_NEGOTIATION_PORT, carnary::lib::TCP_SOCKET);
     } catch(std::runtime_error& ex) {
         throw ex;
     }

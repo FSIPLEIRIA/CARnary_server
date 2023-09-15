@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <cstring>
 #include <thread>
-#include "Utils.h"
+#include <carnary/Utils.h>
 
 using namespace carnary::server;
 
@@ -51,7 +51,7 @@ void Watcher::init() {
 
     // open the monitoring port (TCP socket)
     try {
-        this->sockfd = Utils::createSocket(this->negotiation->monitoringPort, TCP_SOCKET);
+        this->sockfd = carnary::lib::Utils::createClientSocket("0.0.0.0", this->negotiation->monitoringPort, carnary::lib::TCP_SOCKET);
     } catch(std::runtime_error& ex) {
         std::uint8_t response = WATCHER_NACK;
         // reply with NACK
@@ -90,7 +90,9 @@ void Watcher::init() {
     auto clientAcceptRoutine = [&] () {
         // accept the client
         socklen_t clientLen = sizeof(struct sockaddr);
-        if(accept(this->sockfd, (struct sockaddr*) &(this->clientAddr), &clientLen) < 0) {
+
+        int clientfd;
+        if((clientfd = accept(this->sockfd, (struct sockaddr*) &(this->clientAddr), &clientLen)) < 0) {
             throw std::runtime_error("Error accepting the client!");
         }
         std::cout << "Client accepted " << negotiation->serviceName << std::endl;
@@ -105,7 +107,7 @@ void Watcher::init() {
         do {
             // receive the heartbeat
 
-            if (recv(this->sockfd, &heartbeat, sizeof(std::uint8_t), MSG_TRUNC | MSG_DONTWAIT) < 0) {
+            if (recv(clientfd, &heartbeat, sizeof(std::uint8_t), MSG_TRUNC | MSG_DONTWAIT) < 0) {
                 // if the problem is blocking, we're fine with that
                 if(errno != EWOULDBLOCK && errno != EAGAIN)
                     throw std::runtime_error("Error receiving the heartbeat!");

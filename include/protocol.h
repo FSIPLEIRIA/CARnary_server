@@ -12,6 +12,9 @@
 #include <cstdint>
 #include <semaphore.h>
 
+// the TCP port to reserve to the negotiation
+#define DAEMON_TCP_NEGOTIATION_PORT 6666
+
 /*! \brief Heartbeat value sent over the watcher socket. */
 enum heartbeat_t {
     KEEPALIVE,
