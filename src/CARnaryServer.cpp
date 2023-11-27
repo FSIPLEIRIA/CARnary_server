@@ -199,7 +199,7 @@ void CARnaryServer::setupNegotiationSocket() {
     std::cout << "Setting up the negotiation socket... ";
 
     try {
-        this->sockfd = carnary::lib::Utils::createClientSocket("0.0.0.0", DAEMON_TCP_NEGOTIATION_PORT, carnary::lib::TCP_SOCKET);
+        this->sockfd = carnary::lib::Utils::createServerSocket(DAEMON_TCP_NEGOTIATION_PORT, carnary::lib::TCP_SOCKET);
     } catch(std::runtime_error& ex) {
         throw ex;
     }
